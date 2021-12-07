@@ -2,17 +2,19 @@ package ibf2021.d2;
 
 import java.io.Console;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.util.List;
 import java.util.Scanner;
 
 public class ShopCart {
-    private static final String DEFAULT_DB_ROOT_FOLDER = "db";
+    private ShoppingCartDB cartDB;
     private Cart cart;
 
     public ShopCart() {
-        System.out.println("Welcome to your shopping cart");
+        this.cart = new Cart();
+    }
+
+    public ShopCart(ShoppingCartDB cartDB) {
+        this.cartDB = cartDB;
         this.cart = new Cart();
     }
 
@@ -76,22 +78,19 @@ public class ShopCart {
         scan.close();
     }
 
-    private static String initDBFolder(String folderName) throws IOException {
-        Path path = Paths.get(folderName);
-        if(!Files.exists(path)) {
-            return Files.createDirectories(path).toString();
-        }
-        return folderName;
-    }
+
 
     public static void main(String[] args) throws IOException {
-        String dbRoot = DEFAULT_DB_ROOT_FOLDER;
+        ShoppingCartDB cartDB;
         if (args.length > 0) {
-            dbRoot = args[0];
+            // using db folder specified in argument
+            cartDB = new ShoppingCartDB(args[0]);
+        } else {
+            // using default db folder
+            cartDB = new ShoppingCartDB();
         }
-        System.out.println("Using database root folder: " + initDBFolder(dbRoot));
 
-        ShopCart sc = new ShopCart();
+        ShopCart sc = new ShopCart(cartDB);
         sc.run();
     }
 }
