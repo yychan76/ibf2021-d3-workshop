@@ -59,10 +59,8 @@ public class ShopCart {
                 case "users":
                     List<String> users = this.cartDB.listUsers();
                     if (users.size() > 0) {
-                        System.out.println("Users who have saved cart items:");
-                        for (String user : users) {
-                            System.out.println(user);
-                        }
+                        System.out.println("The following users are registered");
+                        Cart.displayItems(users);
                     } else {
                         System.out.println("There are no users who have saved cart items");
                     }
