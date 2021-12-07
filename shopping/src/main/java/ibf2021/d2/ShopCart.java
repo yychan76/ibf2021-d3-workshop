@@ -5,57 +5,19 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Scanner;
 
 public class ShopCart {
     private static final String DEFAULT_DB_ROOT_FOLDER = "db";
-    protected List<String> cartItems;
+    private Cart cart;
 
     public ShopCart() {
         System.out.println("Welcome to your shopping cart");
-        cartItems = new ArrayList<String>();
+        this.cart = new Cart();
     }
 
-    public void list () {
-        if (cartItems.size() == 0) {
-            System.out.println("Your cart is empty");
-        } else {
-            for (int i=0; i < cartItems.size(); i++) {
-                System.out.printf("%d. %s %n", i + 1, cartItems.get(i));
-            }
-        }
-    }
-
-    public void add (String items) {
-        for (String item : items.split(",")) {
-            item = item.trim();
-            if (cartItems.contains(item)) {
-                System.out.printf("You have %s in your cart%n", item);
-            } else {
-                this.cartItems.add(item);
-                System.out.printf("%s added to cart%n", item);
-            }
-        }
-    }
-
-    public void delete (int index) {
-        if (index >= 0 && index < this.cartItems.size()) {
-            System.out.printf("%s removed from cart%n", this.cartItems.get(index));
-            this.cartItems.remove(index);
-            System.out.println("Items remaining in cart: " + this.cartItems.size());
-        } else {
-            System.out.println("Incorrect item index");
-        }
-    }
-
-    public int getItemsCount() {
-        return this.cartItems.size();
-    }
-
-    public List<String> getItems() {
-        return this.cartItems;
+    public Cart getCart() {
+        return this.cart;
     }
 
     private String getInput() {
@@ -80,14 +42,14 @@ public class ShopCart {
             String[] commands = input.split(" ");
             switch (commands[0]) {
                 case "list":
-                    list();
+                    this.cart.list();
                     break;
                 case "add":
-                    add(input.substring(commands[0].length()));
+                    this.cart.add(input.substring(commands[0].length()));
                     break;
                 case "delete":
                     if (commands.length > 1) {
-                        delete(Integer.parseInt(commands[1]) - 1);
+                        this.cart.delete(Integer.parseInt(commands[1]) - 1);
                     } else {
                         System.out.println("Please include the number index of the item you want to delete");
                     }
@@ -96,7 +58,7 @@ public class ShopCart {
                     exit = true;
                     System.out.println("Thank you for using the shopping cart.");
                     System.out.println("You have these remaining items:");
-                    list();
+                    this.cart.list();
                     break;
                 default:
                     System.out.println(
