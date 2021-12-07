@@ -11,13 +11,17 @@ public class Cart {
         cartItems = new ArrayList<String>();
     }
 
+    public static void displayItems(List<String> items) {
+        for (int i=0; i < items.size(); i++) {
+            System.out.printf("%d. %s %n", i + 1, items.get(i));
+        }
+    }
+
     public void list () {
         if (cartItems.size() == 0) {
             System.out.println("Your cart is empty");
         } else {
-            for (int i=0; i < cartItems.size(); i++) {
-                System.out.printf("%d. %s %n", i + 1, cartItems.get(i));
-            }
+            displayItems(cartItems);
         }
     }
 
