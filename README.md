@@ -1,1 +1,3 @@
-# ibf2021-d3-workshop
+# Objective
+
+The objective of this workshop is to implement a simple text file database
