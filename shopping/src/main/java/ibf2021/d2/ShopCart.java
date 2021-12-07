@@ -34,7 +34,7 @@ public class ShopCart {
         return input;
     }
 
-    private void run() {
+    private void run() throws IOException {
         Scanner scan = new Scanner(System.in);
 
         boolean exit = false;
@@ -56,6 +56,32 @@ public class ShopCart {
                         System.out.println("Please include the number index of the item you want to delete");
                     }
                     break;
+                case "users":
+                    List<String> users = this.cartDB.listUsers();
+                    if (users.size() > 0) {
+                        System.out.println("Users who have saved cart items:");
+                        for (String user : users) {
+                            System.out.println(user);
+                        }
+                    } else {
+                        System.out.println("There are no users who have saved cart items");
+                    }
+                    break;
+                case "login":
+                    if (commands.length > 1) {
+                        String userName = commands[1];
+                        this.cartDB.setUserName(userName);
+                        List<String> savedItems = this.cartDB.load();
+                        this.cart.setItems(savedItems);
+                        System.out.println(userName + ", your cart contains the following items");
+                        this.cart.list();
+                    } else {
+                        System.out.println("Please include your name");
+                    }
+                    break;
+                case "save":
+                    this.cartDB.save(this.cart.getItems());
+                    break;
                 case "exit":
                     exit = true;
                     System.out.println("Thank you for using the shopping cart.");
@@ -66,9 +92,12 @@ public class ShopCart {
                     System.out.println(
                         """
                         Unrecognised command. Please enter:
+                        users \t\tto list all users who have saved cart items
+                        login yourname \tto load your previous saved items
                         list \t\tto show the items in your cart
                         add item \tto add the item to your cart
                         delete index \tto delete the number index item from your cart
+                        save \t\tto save your cart items to file for future use
                         exit \t\tto exit
                         """
                     );

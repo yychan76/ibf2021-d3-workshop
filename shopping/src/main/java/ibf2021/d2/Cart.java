@@ -7,6 +7,7 @@ public class Cart {
     protected List<String> cartItems;
 
     public Cart() {
+        System.out.println("Welcome to your shopping cart");
         cartItems = new ArrayList<String>();
     }
 
@@ -48,5 +49,9 @@ public class Cart {
 
     public List<String> getItems() {
         return this.cartItems;
+    }
+
+    public void setItems(List<String> items) {
+        this.cartItems = items;
     }
 }
