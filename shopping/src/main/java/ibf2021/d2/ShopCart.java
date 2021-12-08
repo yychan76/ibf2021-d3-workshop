@@ -2,6 +2,7 @@ package ibf2021.d2;
 
 import java.io.Console;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
 import java.util.Scanner;
 
@@ -34,11 +35,11 @@ public class ShopCart {
         return input;
     }
 
-    private void run() throws IOException {
-        Scanner scan = new Scanner(System.in);
+    public void commandInput(InputStream in) throws IOException {
+        Scanner scan = new Scanner(in);
 
         boolean exit = false;
-        while(!exit) {
+        while(!exit && scan.hasNextLine()) {
             // String input = getInput();
             String input = getScannerInput(scan);
             String[] commands = input.split(" ");
@@ -105,6 +106,9 @@ public class ShopCart {
         scan.close();
     }
 
+    public void run() throws IOException {
+        commandInput(System.in);
+    }
 
 
     public static void main(String[] args) throws IOException {
