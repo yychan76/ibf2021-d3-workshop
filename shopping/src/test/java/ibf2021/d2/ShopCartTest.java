@@ -5,6 +5,8 @@ import static org.junit.Assert.assertTrue;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -15,14 +17,17 @@ import org.junit.Test;
 public class ShopCartTest {
     private ShopCart sc;
     private Cart cart;
+    private ShoppingCartDB cartDB;
+    private static final String LINESEP = System.lineSeparator();
 
     private static ByteArrayInputStream stringToInputStream(String string) throws IOException {
-        return new ByteArrayInputStream(string.getBytes());
+        return new ByteArrayInputStream(string.getBytes(StandardCharsets.UTF_8));
     }
 
     @Before
     public void setUp() throws Exception {
-        sc = new ShopCart();
+        cartDB = new ShoppingCartDB();
+        sc = new ShopCart(cartDB);
         cart = sc.getCart();
     }
 
@@ -30,6 +35,7 @@ public class ShopCartTest {
     public void tearDown() throws Exception {
         sc = null;
         cart = null;
+        cartDB = null;
     }
 
     @Test
@@ -109,6 +115,72 @@ public class ShopCartTest {
         List<String> expected = Arrays.asList("apple", "pie");
         assertEquals(expected, cartBeforeDelete);
     }
+
+    @Test
+    public void loginUser_LoginUser_ShouldLogin() throws IOException {
+        String expectedUserName = "TestUserNoob";
+        sc.commandInput(stringToInputStream("login " + expectedUserName));
+        String userName = cartDB.getUserName();
+        assertEquals(expectedUserName, userName);
+    }
+
+    @Test
+    public void loginUserRestoreCart_LoginUser_ShouldRestoreCartItems() throws IOException {
+        String userA = "TestUserNoob";
+        String userB = "TestUserSensei";
+        // login first user
+        sc.commandInput(stringToInputStream("login " + userA));
+        int itemsCount = cart.getItemsCount();
+        // empty out existing items first
+        for (int i = itemsCount; i > 0; i--) {
+            sc.commandInput(stringToInputStream("delete " + i));
+        }
+        // add items to cart
+        sc.commandInput(stringToInputStream("add apple, orange, pear"));
+        // save items to file
+        sc.commandInput(stringToInputStream("save"));
+        // login second user
+        sc.commandInput(stringToInputStream("login " + userB));
+        itemsCount = cart.getItemsCount();
+        // empty out existing items first
+        for (int i = itemsCount; i > 0; i--) {
+            sc.commandInput(stringToInputStream("delete " + i));
+        }
+        sc.commandInput(stringToInputStream("add soba, soju, sake"));
+        sc.commandInput(stringToInputStream("save"));
+        // login first user again
+        sc.commandInput(stringToInputStream("login " + userA));
+        List<String> expectedCartItems = new ArrayList<String>(Arrays.asList("apple", "orange", "pear"));
+        List<String> firstCartItems = cart.getItems();
+        assertEquals(expectedCartItems, firstCartItems);
+
+    }
+
+    @Test
+    public void loginUserSaveCart_SaveCommandNotRun_ShouldNotSaveCartItems() throws IOException {
+        String userA = "TestUserNoob";
+        String userB = "TestUserSensei";
+        // login first user
+        sc.commandInput(stringToInputStream("login " + userA));
+        int itemsCount = cart.getItemsCount();
+        // empty out existing items first
+        for (int i = itemsCount; i > 0; i--) {
+            sc.commandInput(stringToInputStream("delete " + i));
+        }
+        // save empty cart to file
+        sc.commandInput(stringToInputStream("save"));
+        // add items to cart
+        sc.commandInput(stringToInputStream("add apple, orange, pear"));
+        // login second user
+        sc.commandInput(stringToInputStream("login " + userB));
+        // login first user again
+        sc.commandInput(stringToInputStream("login " + userA));
+        List<String> expectedEmptyCartItems = new ArrayList<String>();
+        List<String> firstCartItems = cart.getItems();
+        assertEquals(expectedEmptyCartItems, firstCartItems);
+
+    }
+
 
 
 }
