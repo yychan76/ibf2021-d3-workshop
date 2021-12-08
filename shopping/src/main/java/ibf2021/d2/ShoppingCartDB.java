@@ -80,6 +80,7 @@ public class ShoppingCartDB {
         System.out.println("Your cart has been saved");
     }
 
+    // from https://www.baeldung.com/java-filename-without-extension
     public static String removeFileExtension(String filename, boolean removeAllExtensions) {
         if (filename == null || filename.isEmpty()) {
             return filename;
